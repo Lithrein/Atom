@@ -55,9 +55,9 @@ class Atom_Feed {
       * \brief Constructor of Atom_Feed
       * \since 1.0
       *
-      * @param $path  : string
-      * @param $title : string
-      * @param author : string
+      * @param $path   : string
+      * @param $title  : string
+      * @param $author : string
       */
     public function __construct ( $path, $title, $author ) {
         
@@ -132,18 +132,18 @@ class Atom_Category {
       * \brief Generate the xml of the category
       * \since 1.0
       *
-      * @return DomElement
+      * @return DomDocument
       */
     public function generate_xml () {
         $doc = new DomDocument;
         $cat = $doc->createElement('catgory');
         $category = $doc->appendChild($cat);
         
-        $category->setAttribute ("name",   (string) $this->name );
+        $category->setAttribute ("name",   (string) $this->name);
         $category->setAttribute ("scheme", (string) $this->scheme);
-        $category->setAttribute ("label",  (string) $this->label  );
+        $category->setAttribute ("label",  (string) $this->label);
 
-        return $doc->saveXML();
+        return $doc;
     }
     
      /**
@@ -214,6 +214,164 @@ class Atom_Category {
 }
 
 class Atom_Text {
+
+     /**
+      * \brief Balise de contenu (title, summary, content, rights)
+      * \since 1.0
+      *
+      * @var string
+      * @name tag
+      */
+    private $tag;
+     /**
+      * \brief Type de contenu (text, html, xhtml)
+      * \since 1.0
+      *
+      * @var string
+      * @name type
+      */
+    private $type;
+     /**
+      * \brief Texte contenu dans la balise indiquée par tag
+      * \since 1.0
+      *
+      * @var string
+      * @name content
+      */
+    private $content;
+     /**
+      * \brief Charset pour l'encodage
+      * \since 1.0
+      *
+      * @var string
+      * @name charset
+      */
+    private $charset;
+
+     /**
+      * \brief Constructeur de la construction text
+      * \since 1.0
+      *
+      * @param $tag     : string
+      * @param $type    : string
+      * @param $content : string
+      */
+    public function __construct ( $tag, $type, $content , $charset = "UTF-8") {
+
+        $this->tag     = (string) $tag;
+        $this->type    = (string) $type;
+        $this->content = (string) $content;
+
+    }
+
+    public function generate_xml () {
+        $doc = new DomDocument;
+        $_tag = $doc->createElement($this->tag);
+        $tag = $doc->appendChild($_tag);
+        
+        $tag->setAttribute("type", (string) $this->type);
+        
+        if (!strcmp($this->type, "html") || !strcmp($this->type, "xhtml")) {
+            $content = htmlentities($this->content, ENT_NOQUOTES, $this->charset);
+
+            if (!strcmp($this->type, "html")) {
+                $texte = $doc->createTextNode($content);
+                $tag->appendChild($texte);
+            } else {
+                $div = $doc->createElement("div");
+                $div->setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+
+                $texte = $doc->createTextNode($content);
+                $div->appendChild($texte);
+                $tag->appendChild($div);
+            }
+
+        } else {
+            $texte = $doc->createTextNode($this->content);
+            $tag->appendChild($texte);
+        }
+        return $doc
+    }
+
+     /**
+      * \brief Getter de tag
+      * \since 1.0
+      *
+      * @return $tag : string
+      */
+    public function get_tag () {
+        return $this->tag;
+    }
+
+     /**
+      * \brief Getter de type
+      * \since 1.0
+      *
+      * @return $type : string
+      */
+    public function get_type () {
+        return $this->type;
+    }
+
+     /**
+      * \brief Getter de content
+      * \since 1.0
+      *
+      * @return $content : string
+      */
+    public function get_content () {
+        return $this->content;
+    }
+
+     /**
+      * \brief Getter de charset
+      * \since 1.0
+      *
+      * @return $charset : string
+      */
+    public function get_charset () {
+        return $this->charset;
+    }
+
+    /**
+     * \brief Setter de tag
+     * \since 1.0
+     *
+     * @param $tag   : string
+     * @return $this : Atom_Text
+     */
+    public function tag ( $tag ) {
+        $this->tag = (string) $tag;
+        return $this;
+    }
+
+    /**
+     * \brief Setter de type
+     * \since 1.0
+     *
+     * @param $type  : string
+     * @return $this : Atom_Text
+     */
+    public function type ( $type ) {
+        $this->type = (string) $type;
+        return $this;
+    }
+
+    /**
+     * \brief Setter de content
+     * \since 1.0
+     *
+     * @param $content : string
+     * @return $this   : Atom_Text
+     */
+    public function content ( $content ) {
+        $this->content = (string) $content;
+        return $this;
+    }
+
+    public function charset ( $charset ) {
+        $this->charset = (string) $charset;
+    }
 }
 
 ?>
