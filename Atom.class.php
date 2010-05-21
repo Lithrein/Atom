@@ -509,7 +509,7 @@ class Atom_Link {
       *
       * @return $rel : string
       */
-    public function get_ rel() {
+    public function get_rel () {
         return $this->rel;
     }
     
@@ -550,7 +550,7 @@ class Atom_Link {
      * @param $href   : string
      * @return $this  : Atom_Link
      */
-    public function  ( $href ) {
+    public function href ( $href ) {
         $this->href = (string) $href;
         return $this;
     }
@@ -562,7 +562,7 @@ class Atom_Link {
      * @param $rel   : string
      * @return $this : Atom_Link
      */
-    public function  ( $rel ) {
+    public function rel  ( $rel ) {
         $this->rel = (string) $rel;
         return $this;
     }
@@ -574,7 +574,7 @@ class Atom_Link {
      * @param $type   : string
      * @return $this  : Atom_Link
      */
-    public function  ( $type ) {
+    public function type ( $type ) {
         $this->type = (string) $type;
         return $this;
     }
@@ -586,7 +586,7 @@ class Atom_Link {
      * @param $hreflang   : string
      * @return $this      : Atom_Link
      */
-    public function  ( $hreflang ) {
+    public function hreflang ( $hreflang ) {
         $this->hreflang = (string) $hreflang;
         return $this;
     }
@@ -599,7 +599,7 @@ class Atom_Link {
      * @param $length   : int
      * @return $this    : Atom_Link
      */
-    public function  ( $length ) {
+    public function length ( $length ) {
         $this->length = (int) $length;
         return $this;
     }
