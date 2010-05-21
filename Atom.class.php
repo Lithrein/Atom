@@ -1,4 +1,24 @@
 <?php
+/*****************************************************************************************
+**  Copyright (c) 2010 Lithrein                                                         **
+**                                                                                      **
+**  Permission  is hereby granted, free of charge, to any person obtaining a copy of    **
+**  this  software  and  associated documentation files (the "Software"), to deal in    **
+**  the  Software  without  restriction,  including without limitation the rights to    **
+**  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of    **
+**  the  Software, and to permit persons to whom the Software is furnished to do so,    **
+**  subject to the following conditions:                                                **
+**                                                                                      **
+**  The  above  copyright notice and this permission notice shall be included in all    **
+**  copies or substantial portions of the Software.                                     **
+**                                                                                      **
+**  THE  SOFTWARE  IS  PROVIDED  "AS  IS",  WITHOUT WARRANTY OF ANY KIND, EXPRESS OR    **
+**  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS    **
+**  FOR  A  PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR    **
+**  COPYRIGHT  HOLDERS  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER    **
+**  IN  AN  ACTION  OF  CONTRACT,  TORT  OR  OTHERWISE,  ARISING  FROM, OUT OF OR IN    **
+**  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.          **
+******************************************************************************************/
 
 class Atom_Feed {
 
@@ -9,7 +29,7 @@ class Atom_Feed {
       * @var string
       * @name path
       */
-    private $path = "";
+    private $path;
      /**
       * \brief Title of Atom Feed
       * \since 1.0
@@ -17,7 +37,7 @@ class Atom_Feed {
       * @var string
       * @name title
       */
-    private $title = "";
+    private $title;
      /**
       * \brief Stream's author 
       * \since 1.0
@@ -25,7 +45,7 @@ class Atom_Feed {
       * @var string
       * @name author
       */
-    private $author = "";
+    private $author;
      /*
       * \brief Dom Document (Atom Feed)
       * \since 1.0
@@ -120,7 +140,7 @@ class Atom_Category {
       * @param $scheme : string
       * @param $label  : string
       */
-    public function __construct ( $name, $scheme, $label ) {
+    public function __construct ( $name, $scheme = '', $label = '' ) {
         
         $this->name   = (string) $name;
         $this->scheme = (string) $scheme;
@@ -129,7 +149,7 @@ class Atom_Category {
     }
 
      /**
-      * \brief Generate the xml of the category
+      * \brief Generates the xml of the Atom_Category entry
       * \since 1.0
       *
       * @return DomDocument
@@ -139,9 +159,12 @@ class Atom_Category {
         $cat = $doc->createElement('catgory');
         $category = $doc->appendChild($cat);
         
-        $category->setAttribute ("name",   (string) $this->name);
-        $category->setAttribute ("scheme", (string) $this->scheme);
-        $category->setAttribute ("label",  (string) $this->label);
+        $category->setAttribute ("name", (string) $this->name);
+        if (!empty($this->scheme))
+            $category->setAttribute ("scheme", (string) $this->scheme);
+        if (!empty($this->label))
+            $category->setAttribute ("label", (string) $this->label);
+        
 
         return $doc;
     }
@@ -216,7 +239,7 @@ class Atom_Category {
 class Atom_Text {
 
      /**
-      * \brief Balise de contenu (title, summary, content, rights)
+      * \brief Content tag (title, summary, content, rights)
       * \since 1.0
       *
       * @var string
@@ -224,7 +247,7 @@ class Atom_Text {
       */
     private $tag;
      /**
-      * \brief Type de contenu (text, html, xhtml)
+      * \brief Kind of content (text, html, xhtml)
       * \since 1.0
       *
       * @var string
@@ -232,7 +255,7 @@ class Atom_Text {
       */
     private $type;
      /**
-      * \brief Texte contenu dans la balise indiquée par tag
+      * \brief Text in the node tag
       * \since 1.0
       *
       * @var string
@@ -240,7 +263,7 @@ class Atom_Text {
       */
     private $content;
      /**
-      * \brief Charset pour l'encodage
+      * \brief Charset to encode plain text
       * \since 1.0
       *
       * @var string
@@ -249,7 +272,7 @@ class Atom_Text {
     private $charset;
 
      /**
-      * \brief Constructeur de la construction text
+      * \brief Text construction's constructor
       * \since 1.0
       *
       * @param $tag     : string
@@ -264,6 +287,11 @@ class Atom_Text {
 
     }
 
+    /**
+     * \brief Generates the xml of the Atom_Text entry
+     *
+     * @return $doc : DomDocument
+     */
     public function generate_xml () {
         $doc = new DomDocument;
         $_tag = $doc->createElement($this->tag);
@@ -294,7 +322,7 @@ class Atom_Text {
     }
 
      /**
-      * \brief Getter de tag
+      * \brief Getter of tag
       * \since 1.0
       *
       * @return $tag : string
@@ -304,7 +332,7 @@ class Atom_Text {
     }
 
      /**
-      * \brief Getter de type
+      * \brief Getter of type
       * \since 1.0
       *
       * @return $type : string
@@ -314,7 +342,7 @@ class Atom_Text {
     }
 
      /**
-      * \brief Getter de content
+      * \brief Getter of content
       * \since 1.0
       *
       * @return $content : string
@@ -324,7 +352,7 @@ class Atom_Text {
     }
 
      /**
-      * \brief Getter de charset
+      * \brief Getter of charset
       * \since 1.0
       *
       * @return $charset : string
@@ -334,7 +362,7 @@ class Atom_Text {
     }
 
     /**
-     * \brief Setter de tag
+     * \brief Setter of tag
      * \since 1.0
      *
      * @param $tag   : string
@@ -346,7 +374,7 @@ class Atom_Text {
     }
 
     /**
-     * \brief Setter de type
+     * \brief Setter of type
      * \since 1.0
      *
      * @param $type  : string
@@ -358,7 +386,7 @@ class Atom_Text {
     }
 
     /**
-     * \brief Setter de content
+     * \brief Setter of content
      * \since 1.0
      *
      * @param $content : string
@@ -368,11 +396,238 @@ class Atom_Text {
         $this->content = (string) $content;
         return $this;
     }
-
+    
+    /**
+     * \brief Setter of charset
+     *
+     * @param $charset : string
+     * @return $this   : Atom_Text
+     */
     public function charset ( $charset ) {
         $this->charset = (string) $charset;
+        return $this;
     }
 }
 
-?>
+class Atom_Link {
+     /**
+      * \brief Hypertext reference of the link
+      * \since 1.0
+      *
+      * @var string
+      * @name href
+      */
+    private $href;
+     /**
+      * \brief Link's relation with the stream
+      * \since 1.0
+      *
+      * @var string
+      * @name rel
+      */
+    private $rel;
+     /**
+      * \brief type of content
+      * \since 1.0
+      *
+      * @var string
+      * @name type
+      */
+    private $type;
+     /**
+      * \brief Website's language pointed to by the URL
+      * \since 1.0
+      *
+      * @var string
+      * @name hreflang
+      */
+    private $hreflang;
+     /**
+      * \brief Weight of the page pointed to by the URL (bytes)
+      * \since 1.0
+      *
+      * @var string
+      * @name int
+      */
+    private $length;
+    
+     /**
+      * \brief Text construction's constructor
+      * \todo improve security and verification
+      * \since 1.0
+      *
+      * @param $href     : string
+      * @param $rel      : string
+      * @param $type     : string
+      * @param $herflang : string
+      * @param $length   : int
+      */
+    public function __construct ( $href, $rel = '', $type = '', $hreflang = '', $lenght = -1) {
+        $this->$href     = (string) $href;
+        $this->$rel      = (string) $rel;
+        $this->$type     = (string) $type;
+        $this->$hreflang = (string) $hreflang;
+        $this->$length   = (int) $length;
+    }
+    
+    /**
+     * \brief Generates the xml of the Atom_Link entry
+     *
+     * @return $doc : DomDocument
+     */
+    public function generate_xml () {
+        $doc = new DomDocument;
+        $link = $doc->createElement('link');
+        $link_node = $doc->appendChild($link);
+        
+        $link_node->setAttribute ("href", (string) $this->href);
+        if (!empty($this->rel))
+            $link_node->setAttribute ("rel",  (string) $this->rel);
+        if (!empty($this->type))
+            $link_node->setAttribute ("type",  (string) $this->type);
+        if (!empty($this->hreflang))
+            $link_node->setAttribute ("hreflang", (string) $this->hreflang);
+        if (!empty($this->length))
+            $link_node->setAttribute ("length", (int) $this->length);
+            
+        return $doc
+    }
+    
+     /**
+      * \brief Getter of href
+      * \since 1.0
+      *
+      * @return $href : string
+      */
+    public function get_href () {
+        return $this->href;
+    }
+    
+     /**
+      * \brief Getter of rel
+      * \since 1.0
+      *
+      * @return $rel : string
+      */
+    public function get_ rel() {
+        return $this->rel;
+    }
+    
+     /**
+      * \brief Getter of type
+      * \since 1.0
+      *
+      * @return $type : string
+      */
+    public function get_type () {
+        return $this->type;
+    }
+    
+     /**
+      * \brief Getter of hreflang
+      * \since 1.0
+      *
+      * @return $hreflang : string
+      */
+    public function get_hreflang () {
+        return $this->hreflang;
+    }
+    
+     /**
+      * \brief Getter of length
+      * \since 1.0
+      *
+      * @return $length : int
+      */
+    public function get_length () {
+        return $this->length;
+    }
 
+     /**
+     * \brief Setter of href
+     * \since 1.0
+     *
+     * @param $href   : string
+     * @return $this  : Atom_Link
+     */
+    public function  ( $href ) {
+        $this->href = (string) $href;
+        return $this;
+    }
+    
+     /**
+     * \brief Setter of rel
+     * \since 1.0
+     *
+     * @param $rel   : string
+     * @return $this : Atom_Link
+     */
+    public function  ( $rel ) {
+        $this->rel = (string) $rel;
+        return $this;
+    }
+    
+     /**
+     * \brief Setter of type
+     * \since 1.0
+     *
+     * @param $type   : string
+     * @return $this  : Atom_Link
+     */
+    public function  ( $type ) {
+        $this->type = (string) $type;
+        return $this;
+    }
+    
+     /**
+     * \brief Setter of hreflang
+     * \since 1.0
+     *
+     * @param $hreflang   : string
+     * @return $this      : Atom_Link
+     */
+    public function  ( $hreflang ) {
+        $this->hreflang = (string) $hreflang;
+        return $this;
+    }
+    
+    
+     /**
+     * \brief Setter of length
+     * \since 1.0
+     *
+     * @param $length   : int
+     * @return $this    : Atom_Link
+     */
+    public function  ( $length ) {
+        $this->length = (int) $length;
+        return $this;
+    }
+}
+
+class Atom_Person {
+     /**
+      * \brief Name of the author
+      * \since 1.0
+      *
+      * @var string
+      * @name name
+      */
+    private $name;
+    /**
+      * \brief URI (Uniform Ressource Indicator) of the author (e.g.: His Website)
+      * \since 1.0
+      *
+      * @var string
+      * @name uri
+      */
+    private $uri;
+    /**
+      * \brief E-mail adress of the author
+      * \since 1.0
+      *
+      * @var string
+      * @name mail
+      */
+    private $mail;
+}
