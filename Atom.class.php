@@ -46,7 +46,7 @@ class Atom_Feed {
       * @name author
       */
     private $author;
-     /*
+     /**
       * \brief Dom Document (Atom Feed)
       * \since 1.0
       * 
@@ -318,7 +318,7 @@ class Atom_Text {
             $texte = $doc->createTextNode($this->content);
             $tag->appendChild($texte);
         }
-        return $doc
+        return $doc;
     }
 
      /**
@@ -452,7 +452,7 @@ class Atom_Link {
     private $length;
     
      /**
-      * \brief Text construction's constructor
+      * \brief Link construction's constructor
       * \todo improve security and verification
       * \since 1.0
       *
@@ -462,12 +462,12 @@ class Atom_Link {
       * @param $herflang : string
       * @param $length   : int
       */
-    public function __construct ( $href, $rel = '', $type = '', $hreflang = '', $lenght = -1) {
-        $this->$href     = (string) $href;
-        $this->$rel      = (string) $rel;
-        $this->$type     = (string) $type;
-        $this->$hreflang = (string) $hreflang;
-        $this->$length   = (int) $length;
+    public function __construct ( $href, $rel = '', $type = '', $hreflang = '', $length = 0) {
+        $this->href     = (string) $href;
+        $this->rel      = (string) $rel;
+        $this->type     = (string) $type;
+        $this->hreflang = (string) $hreflang;
+        $this->length   = (int) $length;
     }
     
     /**
@@ -490,7 +490,7 @@ class Atom_Link {
         if (!empty($this->length))
             $link_node->setAttribute ("length", (int) $this->length);
             
-        return $doc
+        return $doc;
     }
     
      /**
@@ -630,4 +630,115 @@ class Atom_Person {
       * @name mail
       */
     private $mail;
+
+     /**
+      * \brief Atom_Person construction's constructor
+      *
+      * @param $name : string
+      * @param $uri  : string
+      * @param $mail : string
+      */
+    public function __construct ( $name, $uri = '', $mail = '' ) {
+       $this->name = (string) $name;
+       $this->uri  = (string) $uri;
+       $this->mail = (string) $mail;
+    }
+    
+    /**
+     * \brief Generates the xml of the Atom_Person entry
+     *
+     * @return $doc : DomDocument
+     */
+    public function generate_xml () {
+        $doc = new DomDocument;
+        $_tag = $doc->createElement("author");
+        $tag = $doc->appendChild($_tag);
+
+        $name = $doc->createElement("name");
+        $_name = $doc->createTextNode((string )$this->name);
+        $name->appendChild($_name);
+        $tag->appendChild($name);
+
+        if (!empty($this->uri)) {
+            $uri = $doc->createElement("uri");
+            $_uri = $doc->createTextNode((string )$this->uri);
+            $uri->appendChild($_uri);
+            $tag->appendChild($uri);
+        }
+        
+        if (!empty($this->mail)) {
+            $mail = $doc->createElement("mail");
+            $_mail = $doc->createTextNode((string) $this->mail);
+            $mail->appendChild($_mail);
+            $tag->appendChild($mail);
+        }
+        
+        return $doc;
+    }
+
+     /**
+      * \brief Getter of name
+      * \since 1.0
+      *
+      * @return $name : string
+      */
+    public function get_name () {
+        return $this->name;
+    }
+
+     /**
+      * \brief Getter of uri
+      * \since 1.0
+      *
+      * @return $uri : string
+      */
+    public function get_uri () {
+        return $this->uri;
+    }
+
+     /**
+      * \brief Getter of mail
+      * \since 1.0
+      *
+      * @return $mail : string
+      */
+    public function get_mail () {
+        return $this->mail;
+    }
+
+    /**
+     * \brief Setter of name
+     * \since 1.0
+     *
+     * @param $name   : string
+     * @return $this  : Atom_Person
+     */
+    public function name ( $name) {
+        $this->name = (string) $name;
+        return $this;
+    }
+
+    /**
+     * \brief Setter of uri
+     * \since 1.0
+     *
+     * @param $uri   : string
+     * @return $this : Atom_Person
+     */
+    public function uri ( $uri ) {
+        $this->uri = (string) $uri;
+        return $this;
+    }
+
+    /**
+     * \brief Setter of mail
+     * \since 1.0
+     *
+     * @param $mail    : string
+     * @return $this   : Atom_Person
+     */
+    public function mail ( $mail ) {
+        $this->mail = (string) $mail;
+        return $this;
+    }
 }
