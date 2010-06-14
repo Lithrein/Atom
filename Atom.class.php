@@ -21,7 +21,6 @@
 ******************************************************************************************/
 
 class Atom_Feed {
-
      /**
       * \brief Stream file's path
       * \since 1.0
@@ -80,7 +79,6 @@ class Atom_Feed {
       * @param $author : string
       */
     public function __construct ( $path, $title, $author ) {
-        
         $this->path   = (string) $path;
         $this->title  = (string) $title;
         $this->author = (string) $author;
@@ -175,8 +173,6 @@ class Atom_Entry {
       * @name rights
       */
     private $rights;
-
-
 }
 
 /************************
