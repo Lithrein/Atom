@@ -94,10 +94,87 @@ class Atom_Feed {
       */
     public function addEntry ( $entry ) {
     }
-
 }
 
 class Atom_Entry {
+     /**
+      * \brief Identificator's entry (mandatory)
+      * \since 1.0
+      *
+      * @var string
+      * @name id
+      */
+    private $id;
+     /**
+      * \brief The entry is entitled `title' (mandatory)
+      * \since 1.0
+      *
+      * @var Atom_Text (title)
+      * @name title
+      */
+    private $title;
+     /**
+      * \brief Date (RCF 3339 / ISO 8601) of the last update (mandatory)
+      * \since 1.0
+      *
+      * @var string
+      * @name date
+      */
+    private $date;
+     /**
+      * \brief The author(s)
+      * \since 1.0
+      * @var Atom_Person[]
+      */
+    private $author;
+     /**
+      * \brief The content
+      * \since 1.0
+      *
+      * @var Atom_Text (content)
+      * @name content
+      */
+    private $content;
+     /**
+      * \brief Link(s)
+      * \since 1.0
+      *
+      * @var Atom_Link[]
+      * @name links
+      */
+    private $links;
+     /**
+      * \brief A summary about the content
+      * \since 1.0
+      *
+      * @var Atom_Text
+      * @name summary
+      */
+    private $summary;
+     /**
+      * \brief Category(ies) of the contents
+      * \since 1.0
+      *
+      * @var Atom_Category[]
+      * @name Atom_Category
+      */
+    private $category;
+     /**
+      * \brief list of contributors
+      * \since 1.0
+      *
+      * @var Atom_Person[]
+      * @name contributors
+      */
+    private $contributors;
+     /**
+      * \brief Copyright
+      * \since 1.0
+      *
+      * @var Atom_Text (rights)
+      * @name rights
+      */
+    private $rights;
 
 }
 
