@@ -176,6 +176,7 @@ class Atom_Entry {
       */
     private $rights;
 
+
 }
 
 /************************
