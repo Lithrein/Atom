@@ -237,7 +237,6 @@ class Atom_Category {
 }
 
 class Atom_Text {
-
      /**
       * \brief Content tag (title, summary, content, rights)
       * \since 1.0
