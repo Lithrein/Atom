@@ -175,10 +175,6 @@ class Atom_Entry {
     private $rights;
 }
 
-/************************
- ** Atom Construction **
-************************/
-
 class Atom_Category {
     
      /**
