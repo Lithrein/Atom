@@ -176,7 +176,6 @@ class Atom_Entry {
 }
 
 class Atom_Category {
-    
      /**
       * \brief Category's name
       * \since 1.0
@@ -307,7 +306,6 @@ class Atom_Category {
 }
 
 class Atom_Text {
-
      /**
       * \brief Content tag (title, summary, content, rights)
       * \since 1.0
