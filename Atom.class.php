@@ -22,7 +22,15 @@
 
 class Atom_Feed {
      /**
-      * \brief Stream file's path
+      * \brief id of the feed (unique)
+      * \since 1.0
+      * 
+      * @var string
+      * @name id
+      */
+    private $id;
+     /**
+      * \brief Feed file's path
       * \since 1.0
       * 
       * @var string
@@ -33,18 +41,26 @@ class Atom_Feed {
       * \brief Title of Atom Feed
       * \since 1.0
       * 
-      * @var string
+      * @var Atom_Text
       * @name title
       */
     private $title;
      /**
-      * \brief Stream's author 
+      * \brief Feed's author 
       * \since 1.0
       *
-      * @var string
+      * @var Atom_Person
       * @name author
       */
     private $author;
+     /**
+      * \brief Array of the feed's entries
+      * \since 1.0
+      *
+      * @var Atom_Entry
+      * @name entries
+      */
+    private $entries;
      /**
       * \brief Dom Document (Atom Feed)
       * \since 1.0
@@ -69,19 +85,27 @@ class Atom_Feed {
       * @name icon
       */
     private $icon;
-      
+     
      /**
       * \brief Constructor of Atom_Feed
       * \since 1.0
       *
-      * @param $path   : string
-      * @param $title  : string
-      * @param $author : string
+      * @param $id      : string
+      * @param $path    : string
+      * @param $title   : Atom_Text
+      * @param $author  : Atom_Person
+      * @param $entries : Atom_Entry[]
+      * @param $logo    : string
+      * @param $icon    : string
       */
-    public function __construct ( $path, $title, $author ) {
-        $this->path   = (string) $path;
-        $this->title  = (string) $title;
-        $this->author = (string) $author;
+    public function __construct ( $id, $path, $title, $author, $entries = null, $logo = null, $icon = null ) {
+        $this->id      = (string) $id;
+        $this->path    = (string) $path;
+        $this->title   =  $title;
+        $this->author  =  $author;
+        $this->entries = (empty($entries)) ? array() : $entries;
+        $this->logo = (empty($logo))       ? null    : (string) $logo;
+        $this->icon = (empty($icon))       ? null    : (string) $icon;
     }
     
      /**
@@ -91,7 +115,178 @@ class Atom_Feed {
       * @param $entry : Atom_Entry
       */
     public function addEntry ( $entry ) {
+        $this->entries[] = $entry;
     }
+
+     /**
+      * \brief Getter of $id
+      * \since 1.0
+      *
+      * @return $id : string
+      */
+    public function get_id () {
+        return $this->id;
+    }
+
+     /**
+      * \brief Getter of $path
+      * \since 1.0
+      *
+      * @return $path : string
+      */
+    public function get_path () {
+        return $this->path;
+    }
+    
+     /**
+      * \brief Getter of $title
+      * \since 1.0
+      *
+      * @return $title : Atom_Text
+      */
+    public function get_title () {
+        return $this->title;
+    }
+    
+     /**
+      * \brief Getter of $author
+      * \since 1.0
+      *
+      * @return $author : Atom_Person
+      */
+    public function get_author () {
+        return $this->author;
+    }
+    
+     /**
+      * \brief Getter of $entries
+      * \since 1.0
+      *
+      * @return $entries : Atom_Entry[]
+      */
+    public function get_entries () {
+        return $this->entries;
+    }
+
+     /**
+      * \brief Getter of $document
+      * \since 1.0
+      *
+      * @return $document : DomDocument
+      */
+    public function get_document () {
+        return $this->document;
+    }
+
+     /**
+      * \brief Getter of $logo
+      * \since 1.0
+      *
+      * @return $logo : string
+      */
+    public function get_logo () {
+        return $this->logo;
+    }
+    
+     /**
+      * \brief Getter of $icon
+      * \since 1.0
+      *
+      * @return $icon : string
+      */
+    public function get_icon () {
+        return $this->icon;
+    }
+
+     /**
+      * \brief Setter of $id
+      * \since 1.0
+      *
+      * @param $id : string
+      * @return $this : Atom_Feed
+      */
+    public function id( $id ) {
+        $this->id = (string) $id;
+        return $this;
+    }
+     /**
+      * \brief Setter of $path
+      * \since 1.0
+      *
+      * @param $path : string
+      * @return $this : Atom_Feed
+      */
+    public function path( $path ) {
+        $this->path = (string) $path;
+        return $this;
+    }
+     /**
+      * \brief Setter of $title
+      * \since 1.0
+      *
+      * @param $title : string
+      * @return $this : Atom_Feed
+      */
+    public function title( $title ) {
+        $this->title = (string) $title;
+        return $this;
+    }
+     /**
+      * \brief Setter of $author
+      * \since 1.0
+      *
+      * @param $author : string
+      * @return $this : Atom_Feed
+      */
+    public function author( $author ) {
+        $this->author = (string) $author;
+        return $this;
+    }
+     /**
+      * \brief Setter of $entries
+      * \since 1.0
+      *
+      * @param $entries : string
+      * @return $this : Atom_Feed
+      */
+    public function entries( $entries ) {
+        $this->entries = (string) $entries;
+        return $this;
+    }
+     /**
+      * \brief Setter of $document
+      * \since 1.0
+      *
+      * @param $document : string
+      * @return $this : Atom_Feed
+      */
+    public function document( $document ) {
+        $this->document = (string) $document;
+        return $this;
+    }
+     /**
+      * \brief Setter of $logo
+      * \since 1.0
+      *
+      * @param $logo : string
+      * @return $this : Atom_Feed
+      */
+    public function logo( $logo ) {
+        $this->logo = (string) $logo;
+        return $this;
+    }
+     /**
+      * \brief Setter of $icon
+      * \since 1.0
+      *
+      * @param $icon : string
+      * @return $this : Atom_Feed
+      */
+    public function icon( $icon ) {
+        $this->icon = (string) $icon;
+        return $this;
+    }
+
 }
 
 class Atom_Entry {
@@ -197,7 +392,7 @@ class Atom_Entry {
         $this->title        = $title;
         $this->date         = (int) $date;
          /* Others  */
-        $this->authors       = (empty($authors))       ? array() : $authors;
+        $this->authors       = (empty($authors))     ? array() : $authors;
         $this->content      = (empty($content))      ? null    : $content;
         $this->links        = (empty($links))        ? array() : $links;
         $this->summary      = (empty($summary))      ? null    : $summary;
@@ -406,7 +601,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $id : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function id( $id ) {
         $this->id = (string) $id;
@@ -418,7 +613,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $title : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function title( $title ) {
         $this->title = (string) $title;
@@ -430,7 +625,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $date : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function date( $date ) {
         $this->date = (string) $date;
@@ -442,7 +637,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $authors : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function authors( $author ) {
         $this->authors = (string) $authors;
@@ -454,7 +649,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $content : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function content( $content ) {
         $this->content = (string) $content;
@@ -466,7 +661,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $links : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function links( $links ) {
         $this->links = (string) $links;
@@ -478,7 +673,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $summary : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function summary( $summary ) {
         $this->summary = (string) $summary;
@@ -490,7 +685,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $category : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function category( $category ) {
         $this->category = (string) $category;
@@ -502,7 +697,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $contributors : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function contributors( $contributors ) {
         $this->contributors = (string) $contributors;
@@ -514,7 +709,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $rigths : string
-      * @return $this : Atom_Category
+      * @return $this : Atom_Entry
       */
     public function rigths( $rigths ) {
         $this->rigths = (string) $rigths;
@@ -654,7 +849,7 @@ class Atom_Category {
 
 class Atom_Text {
      /**
-      * \brief Content tag (title, summary, content, rights)
+      * \brief Content tag (title, subtitle, summary, content, rights)
       * \since 1.0
       *
       * @var string
