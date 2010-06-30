@@ -46,6 +46,15 @@ class Atom_Feed {
       */
     private $title;
      /**
+      * \brief timestamp of the last update (mandatory)
+      * \since 1.0
+      *
+      * @var int
+      * @name date
+      */
+    private $date;
+
+     /**
       * \brief Feed's author 
       * \since 1.0
       *
@@ -93,19 +102,21 @@ class Atom_Feed {
       * @param $id      : string
       * @param $path    : string
       * @param $title   : Atom_Text
+      * @param $date    : int (timestamp)
       * @param $author  : Atom_Person
       * @param $entries : Atom_Entry[]
       * @param $logo    : string
       * @param $icon    : string
       */
-    public function __construct ( $id, $path, $title, $author, $entries = null, $logo = null, $icon = null ) {
+    public function __construct ( $id, $path, $title, $date, $author, $entries = null, $logo = null, $icon = null ) {
         $this->id      = (string) $id;
         $this->path    = (string) $path;
         $this->title   =  $title;
+        $this->date    = (int) $date;
         $this->author  =  $author;
         $this->entries = (empty($entries)) ? array() : $entries;
-        $this->logo = (empty($logo))       ? null    : (string) $logo;
-        $this->icon = (empty($icon))       ? null    : (string) $icon;
+        $this->logo    = (empty($logo))    ? null    : (string) $logo;
+        $this->icon    = (empty($icon))    ? null    : (string) $icon;
     }
     
      /**
@@ -116,6 +127,42 @@ class Atom_Feed {
       */
     public function addEntry ( $entry ) {
         $this->entries[] = $entry;
+    }
+
+     /**
+      * \brief Generates the xml of the Atom_Category entry
+      * \since 1.0
+      *
+      * @return DomDocument
+      */
+    public function generate_xml () {
+        $doc = new DomDocument;
+        $_feed = $doc->createElement('feed');
+        $feed = $doc->appendChild($_feed);
+        
+        $feed->setAttribute ("xmlns", "http://www.w3.org/2005/Atom");
+
+         /* Madatory informations about the feed */
+        $id    = $doc->createElement('id');
+        $date  = $doc->createElement('updated');
+        $_id   = $doc->createTextNode((string) $this->id);
+        $_title = $this->title->generate_xml()->getElementsByTagName('title')->item(0);
+        $_date = $doc->createTextNode(date('c', $this->date));
+        $id->appendChild($_id);
+        $title = $doc->importNode($_title, true);
+        $date->appendChild($_date);
+        $feed->appendChild($id);
+        $feed->appendChild($title);
+        $feed->appendChild($date);
+        
+         /* Entries */
+        foreach ($this->entries as $entry) {
+            $__entry = $entry->generate_xml()->getElementsByTagName('entry')->item(0);
+            $_entry = $doc->importNode($__entry, true);
+            $feed->appendChild($_entry);
+        }
+
+        return $doc;
     }
 
      /**
@@ -424,7 +471,7 @@ class Atom_Entry {
             
              /* Madatory informations about the feed */
             $id    = $doc->createElement('id');
-            $date  = $doc->createElement('update');
+            $date  = $doc->createElement('updated');
             $_id   = $doc->createTextNode((string) $this->id);
             $_title = $this->title->generate_xml()->getElementsByTagName('title')->item(0);
             $_date = $doc->createTextNode(date('c', $this->date));
@@ -725,7 +772,7 @@ class Atom_Category {
       * @var string
       * @name name
       */
-    private $name;
+    private $term;
      /**
       * \brief Categorization scheme
       * \since 1.0
@@ -747,13 +794,13 @@ class Atom_Category {
       * \brief Constructor of Atom_Category
       * \since 1.0
       *
-      * @param $name   : string
+      * @param $term   : string
       * @param $scheme : string
       * @param $label  : string
       */
-    public function __construct ( $name, $scheme = '', $label = '' ) {
+    public function __construct ( $term, $scheme = '', $label = '' ) {
         
-        $this->name   = (string) $name;
+        $this->term   = (string) $term;
         $this->scheme = (string) $scheme;
         $this->label  = (string) $label;
 
@@ -770,7 +817,7 @@ class Atom_Category {
         $cat = $doc->createElement('category');
         $category = $doc->appendChild($cat);
         
-        $category->setAttribute ("name", (string) $this->name);
+        $category->setAttribute ("term", (string) $this->term);
         if (!empty($this->scheme))
             $category->setAttribute ("scheme", (string) $this->scheme);
         if (!empty($this->label))
@@ -1245,9 +1292,9 @@ class Atom_Person {
       * \since 1.0
       *
       * @var string
-      * @name mail
+      * @name email
       */
-    private $mail;
+    private $email;
 
      /**
       * \brief Atom_Person construction's constructor
@@ -1255,13 +1302,13 @@ class Atom_Person {
       * @param $name : string
       * @param $type : string
       * @param $uri  : string
-      * @param $mail : string
+      * @param $email : string
       */
-    public function __construct ( $name, $type = 'author', $uri = '', $mail = '' ) {
+    public function __construct ( $name, $type = 'author', $uri = '', $email = '' ) {
        $this->name = (string) $name;
        $this->type = (string) $type;
        $this->uri  = (string) $uri;
-       $this->mail = (string) $mail;
+       $this->email = (string) $email;
     }
     
     /**
@@ -1286,11 +1333,11 @@ class Atom_Person {
             $tag->appendChild($uri);
         }
         
-        if (!empty($this->mail)) {
-            $mail = $doc->createElement("mail");
-            $_mail = $doc->createTextNode((string) $this->mail);
-            $mail->appendChild($_mail);
-            $tag->appendChild($mail);
+        if (!empty($this->email)) {
+            $email = $doc->createElement("email");
+            $_email = $doc->createTextNode((string) $this->email);
+            $email->appendChild($_email);
+            $tag->appendChild($email);
         }
         
         return $doc;
@@ -1327,13 +1374,13 @@ class Atom_Person {
     }
 
      /**
-      * \brief Getter of mail
+      * \brief Getter of email
       * \since 1.0
       *
-      * @return $mail : string
+      * @return $email : string
       */
-    public function get_mail () {
-        return $this->mail;
+    public function get_email () {
+        return $this->email;
     }
 
     /**
@@ -1373,14 +1420,14 @@ class Atom_Person {
     }
 
     /**
-     * \brief Setter of mail
+     * \brief Setter of email
      * \since 1.0
      *
-     * @param $mail    : string
+     * @param $email    : string
      * @return $this   : Atom_Person
      */
-    public function mail ( $mail ) {
-        $this->mail = (string) $mail;
+    public function email ( $email ) {
+        $this->email = (string) $email;
         return $this;
     }
 }
