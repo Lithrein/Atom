@@ -1062,7 +1062,7 @@ class Atom_Person {
       * @param $uri  : string
       * @param $mail : string
       */
-    public function __construct ($name, $type = 'author', $uri = '', $mail = '' ) {
+    public function __construct ( $name, $type = 'author', $uri = '', $mail = '' ) {
        $this->name = (string) $name;
        $this->type = (string) $type;
        $this->uri  = (string) $uri;
