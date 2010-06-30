@@ -124,9 +124,9 @@ class Atom_Entry {
       * \since 1.0
       *
       * @var Atom_Person[]
-      * @name author
+      * @name authors
       */
-    private $author;
+    private $authors;
      /**
       * \brief The content
       * \since 1.0
@@ -183,7 +183,7 @@ class Atom_Entry {
       * @param $id           : string
       * @param $title        : string
       * @param $date         : int (timestamp)
-      * @param $author       : Atom_Person[]
+      * @param $authors       : Atom_Person[]
       * @param $content      : Atom_Text
       * @param $links        : Atom_Link[]
       * @param $summary      : Atom_Text
@@ -191,19 +191,114 @@ class Atom_Entry {
       * @param $contributors : Atom_Person[]
       * @param $rigths       : Atom_Text
       */
-    public function __construct ( $id, $title, $date, $author = null, $content = null, $links = null, $summary = null, $category = null, $contributors = null, $rights = null ) {
+    public function __construct ( $id, $title, $date, $authors = null, $content = null, $links = null, $summary = null, $category = null, $contributors = null, $rights = null ) {
          /* Mandatory  */
-        $this->id = (string) $id;
-        $this->title = (string) $title;
-        $this->date = date('c', (int) $date)
+        $this->id           = (string) $id;
+        $this->title        = $title;
+        $this->date         = (int) $date;
          /* Others  */
-        $this->author = (empty($author)) ? array() : $author;
-        $this->content = (empty($content)) ? null : $content;
-        $this->links = (empty($links)) ? array() : $links;
-        $this->summary = (empty($summary)) ? null : $summary;
-        $this->category = (empty($category)) ? array() : $category;
+        $this->authors       = (empty($authors))       ? array() : $authors;
+        $this->content      = (empty($content))      ? null    : $content;
+        $this->links        = (empty($links))        ? array() : $links;
+        $this->summary      = (empty($summary))      ? null    : $summary;
+        $this->category     = (empty($category))     ? array() : $category;
         $this->contributors = (empty($contributors)) ? array() : $contributors;
-        $this->rights = (empty($rights)) ? null : $rights;
+        $this->rights       = (empty($rights))       ? null    : $rights;
+    }
+    
+     /**
+      * \brief Generates the xml of the Atom_Entry
+      * \since 1.0 
+      *
+      * @todo Check if a content or an altrnate link is specified
+      * @return DomDocument in case of success, false otherwise
+      */
+    public function generate_xml () {
+
+         /* Is the entry valid ?  */
+         /* If at the end of this function $valid = false then there is a problem with the feed */
+        $valid = false;
+        /* Mandatory fileds are filled ? */
+        if (empty($this->id) || empty($this->title) || empty($this->date)) {
+            trigger_error("One (or more) mandatory field(s) are missing !", E_USER_ERROR);
+            return false;
+        } else {
+            $doc = new DomDocument;
+            $_entry = $doc->createElement('entry');
+            $entry = $doc->appendChild($_entry);
+            
+             /* Madatory informations about the feed */
+            $id    = $doc->createElement('id');
+            $date  = $doc->createElement('update');
+            $_id   = $doc->createTextNode((string) $this->id);
+            $_title = $this->title->generate_xml()->getElementsByTagName('title')->item(0);
+            $_date = $doc->createTextNode(date('c', $this->date));
+            $id->appendChild($_id);
+            $title = $doc->importNode($_title, true);
+            $date->appendChild($_date);
+            $entry->appendChild($id);
+            $entry->appendChild($title);
+            $entry->appendChild($date);
+            
+             /* Authors */
+            foreach ($this->authors as $author) {
+                $__author = $author->generate_xml()->getElementsByTagName('author')->item(0);
+                $_author = $doc->importNode($__author, true);
+                $entry->appendChild($_author);
+            }
+
+            /* Content */
+            if (!empty($this->content)) {
+                $valid = true; /* The entry has at least a content  */
+                $_content = $this->content->generate_xml()->getElementsByTagName('content')->item(0);
+                $content = $doc->importNode($_content, true);
+                $entry->appendChild($content);
+            }
+            
+             /* Links */
+            foreach ($this->links as $link) {
+                if (!strcmp($link->get_rel(), 'alternate'))
+                    $valid = true;
+
+                $__link = $link->generate_xml()->getElementsByTagName('link')->item(0);
+                $_link = $doc->importNode($__link, true);
+                $entry->appendChild($_link);
+            }
+            
+             /* Summary */
+            if(!empty($this->summary)) {
+                $_summary = $this->summary->generate_xml()->getElementsByTagName('summary')->item(0);
+                $summary = $doc->importNode($_summary, true);
+                $entry->appendChild($summary);
+            }
+
+             /* Categories */
+            foreach ($this->category as $category) {
+                $__category = $category->generate_xml()->getElementsByTagName('category')->item(0);
+                $_category = $doc->importNode($__category, true);
+                $entry->appendChild($_category);
+            }
+
+             /* Contributors */
+            foreach ($this->contributors as $contributor) {
+                $__contributor = $contributor->generate_xml()->getElementsByTagName('contributor')->item(0);
+                $_contributor = $doc->importNode($__contributor, true);
+                $entry->appendChild($_contributor);
+            }
+
+             /* Rights */
+            if(!empty($this->rights)) {
+                $_rights = $this->rights->generate_xml()->getElementsByTagName('rights')->item(0);
+                $rights = $doc->importNode($_rights, true);
+                $entry->appendChild($rights);
+            }
+            
+            if (!$valid) {
+                trigger_error("Your feed is invalid either a content or an alternative link is missing.", E_USER_NOTICE);
+            }
+
+            return $doc;
+        }
     }
 
      /**
@@ -237,13 +332,13 @@ class Atom_Entry {
     }
     
      /**
-      * \brief Getter of $author
+      * \brief Getter of $authors
       * \since 1.0
       *
-      * @return $author : Atom_Person[]
+      * @return $authors : Atom_Person[]
       */
-    public function get_author () {
-        return $this->author;
+    public function get_authors () {
+        return $this->authors;
     }
     
      /**
@@ -343,14 +438,14 @@ class Atom_Entry {
     }
 
      /**
-      * \brief Setter of $author
+      * \brief Setter of $authors
       * \since 1.0
       *
-      * @param $author : string
+      * @param $authors : string
       * @return $this : Atom_Category
       */
-    public function author( $author ) {
-        $this->author = (string) $author;
+    public function authors( $author ) {
+        $this->authors = (string) $authors;
         return $this;
     }
 
@@ -477,7 +572,7 @@ class Atom_Category {
       */
     public function generate_xml () {
         $doc = new DomDocument;
-        $cat = $doc->createElement('catgory');
+        $cat = $doc->createElement('category');
         $category = $doc->appendChild($cat);
         
         $category->setAttribute ("name", (string) $this->name);
@@ -618,7 +713,7 @@ class Atom_Text {
         $tag = $doc->appendChild($_tag);
         
         $tag->setAttribute("type", (string) $this->type);
-        
+
         if (!strcmp($this->type, "html") || !strcmp($this->type, "xhtml")) {
             $content = htmlentities($this->content, ENT_NOQUOTES, $this->charset);
 
@@ -927,13 +1022,21 @@ class Atom_Link {
 
 class Atom_Person {
      /**
-      * \brief Name of the author
+      * \brief Name of the author, contibutor
       * \since 1.0
       *
       * @var string
       * @name name
       */
     private $name;
+     /**
+      * \brief Is an author or a contributor ?
+      * \since 1.0
+      *
+      * @var string
+      * @name type
+      */
+    private $type;
     /**
       * \brief URI (Uniform Ressource Indicator) of the author (e.g.: His Website)
       * \since 1.0
@@ -955,11 +1058,13 @@ class Atom_Person {
       * \brief Atom_Person construction's constructor
       *
       * @param $name : string
+      * @param $type : string
       * @param $uri  : string
       * @param $mail : string
       */
-    public function __construct ( $name, $uri = '', $mail = '' ) {
+    public function __construct ( $name, $type = 'author', $uri = '', $mail = '' ) {
        $this->name = (string) $name;
+       $this->type = (string) $type;
        $this->uri  = (string) $uri;
        $this->mail = (string) $mail;
     }
@@ -971,7 +1076,7 @@ class Atom_Person {
      */
     public function generate_xml () {
         $doc = new DomDocument;
-        $_tag = $doc->createElement("author");
+        $_tag = $doc->createElement((string) $this->type);
         $tag = $doc->appendChild($_tag);
 
         $name = $doc->createElement("name");
@@ -1007,6 +1112,16 @@ class Atom_Person {
     }
 
      /**
+      * \brief Getter of type
+      * \since 1.0
+      *
+      * @return $type : string
+      */
+    public function get_type () {
+        return $this->type;
+    }
+
+     /**
       * \brief Getter of uri
       * \since 1.0
       *
@@ -1033,8 +1148,20 @@ class Atom_Person {
      * @param $name   : string
      * @return $this  : Atom_Person
      */
-    public function name ( $name) {
+    public function name ( $name ) {
         $this->name = (string) $name;
+        return $this;
+    }
+
+    /**
+     * \brief Setter of type
+     * \since 1.0
+     *
+     * @param $type   : string
+     * @return $this  : Atom_Person
+     */
+    public function type ( $type ) {
+        $this->type = (string) $type;
         return $this;
     }
 
