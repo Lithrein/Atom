@@ -112,17 +112,19 @@ class Atom_Entry {
       */
     private $title;
      /**
-      * \brief Date (RCF 3339 / ISO 8601) of the last update (mandatory)
+      * \brief timestamp of the last update (mandatory)
       * \since 1.0
       *
-      * @var string
+      * @var int
       * @name date
       */
     private $date;
      /**
       * \brief The author(s)
       * \since 1.0
+      *
       * @var Atom_Person[]
+      * @name author
       */
     private $author;
      /**
@@ -173,6 +175,256 @@ class Atom_Entry {
       * @name rights
       */
     private $rights;
+
+     /**
+      * \brief Constructor of Atom_Entry
+      * \since 1.0
+      *
+      * @param $id           : string
+      * @param $title        : string
+      * @param $date         : int (timestamp)
+      * @param $author       : Atom_Person[]
+      * @param $content      : Atom_Text
+      * @param $links        : Atom_Link[]
+      * @param $summary      : Atom_Text
+      * @param $category     : Atom_Category[]
+      * @param $contributors : Atom_Person[]
+      * @param $rigths       : Atom_Text
+      */
+    public function __construct ( $id, $title, $date, $author = null, $content = null, $links = null, $summary = null, $category = null, $contributors = null, $rights = null ) {
+         /* Mandatory  */
+        $this->id = (string) $id;
+        $this->title = (string) $title;
+        $this->date = date('c', (int) $date)
+         /* Others  */
+        $this->author = (empty($author)) ? array() : $author;
+        $this->content = (empty($content)) ? null : $content;
+        $this->links = (empty($links)) ? array() : $links;
+        $this->summary = (empty($summary)) ? null : $summary;
+        $this->category = (empty($category)) ? array() : $category;
+        $this->contributors = (empty($contributors)) ? array() : $contributors;
+        $this->rights = (empty($rights)) ? null : $rights;
+    }
+
+     /**
+      * \brief Getter of $id
+      * \since 1.0
+      *
+      * @return $id : string
+      */
+    public function get_id () {
+        return $this->id;
+    }
+
+     /**
+      * \brief Getter of $title
+      * \since 1.0
+      *
+      * @return $title : Atom_Text
+      */
+    public function get_title () {
+        return $this->title;
+    }
+    
+     /**
+      * \brief Getter of $date
+      * \since 1.0
+      *
+      * @return $date : int
+      */
+    public function get_date () {
+        return $this->date;
+    }
+    
+     /**
+      * \brief Getter of $author
+      * \since 1.0
+      *
+      * @return $author : Atom_Person[]
+      */
+    public function get_author () {
+        return $this->author;
+    }
+    
+     /**
+      * \brief Getter of $content
+      * \since 1.0
+      *
+      * @return $content : Atom_Text
+      */
+    public function get_content () {
+        return $this->content;
+    }
+    
+     /**
+      * \brief Getter of $links
+      * \since 1.0
+      *
+      * @return $links : Atom_Link[]
+      */
+    public function get_links () {
+        return $this->links;
+    }
+    
+     /**
+      * \brief Getter of $summary
+      * \since 1.0
+      *
+      * @return $summary : Atom_Text
+      */
+    public function get_summary () {
+        return $this->summary;
+    }
+    
+     /**
+      * \brief Getter of $category
+      * \since 1.0
+      *
+      * @return $category : Atom_Category
+      */
+    public function get_category () {
+        return $this->category;
+    }
+    
+     /**
+      * \brief Getter of $contributors
+      * \since 1.0
+      *
+      * @return $contributors : Atom_Person[]
+      */
+    public function get_contributors () {
+        return $this->contributors;
+    }
+    
+     /**
+      * \brief Getter of $rigths
+      * \since 1.0
+      *
+      * @return $rigths : Atom_Text
+      */
+    public function get_rigths () {
+        return $this->rigths;
+    }
+
+     /**
+      * \brief Setter of $id
+      * \since 1.0
+      *
+      * @param $id : string
+      * @return $this : Atom_Category
+      */
+    public function id( $id ) {
+        $this->id = (string) $id;
+        return $this;
+    }
+
+     /**
+      * \brief Setter of $title
+      * \since 1.0
+      *
+      * @param $title : string
+      * @return $this : Atom_Category
+      */
+    public function title( $title ) {
+        $this->title = (string) $title;
+        return $this;
+    }
+
+     /**
+      * \brief Setter of $date
+      * \since 1.0
+      *
+      * @param $date : string
+      * @return $this : Atom_Category
+      */
+    public function date( $date ) {
+        $this->date = (string) $date;
+        return $this;
+    }
+
+     /**
+      * \brief Setter of $author
+      * \since 1.0
+      *
+      * @param $author : string
+      * @return $this : Atom_Category
+      */
+    public function author( $author ) {
+        $this->author = (string) $author;
+        return $this;
+    }
+
+     /**
+      * \brief Setter of $content
+      * \since 1.0
+      *
+      * @param $content : string
+      * @return $this : Atom_Category
+      */
+    public function content( $content ) {
+        $this->content = (string) $content;
+        return $this;
+    }
+
+     /**
+      * \brief Setter of $links
+      * \since 1.0
+      *
+      * @param $links : string
+      * @return $this : Atom_Category
+      */
+    public function links( $links ) {
+        $this->links = (string) $links;
+        return $this;
+    }
+
+     /**
+      * \brief Setter of $summary
+      * \since 1.0
+      *
+      * @param $summary : string
+      * @return $this : Atom_Category
+      */
+    public function summary( $summary ) {
+        $this->summary = (string) $summary;
+        return $this;
+    }
+
+     /**
+      * \brief Setter of $category
+      * \since 1.0
+      *
+      * @param $category : string
+      * @return $this : Atom_Category
+      */
+    public function category( $category ) {
+        $this->category = (string) $category;
+        return $this;
+    }
+
+     /**
+      * \brief Setter of $contributors
+      * \since 1.0
+      *
+      * @param $contributors : string
+      * @return $this : Atom_Category
+      */
+    public function contributors( $contributors ) {
+        $this->contributors = (string) $contributors;
+        return $this;
+    }
+
+     /**
+      * \brief Setter of $rigths
+      * \since 1.0
+      *
+      * @param $rigths : string
+      * @return $this : Atom_Category
+      */
+    public function rigths( $rigths ) {
+        $this->rigths = (string) $rigths;
+        return $this;
+    }
 }
 
 class Atom_Category {
