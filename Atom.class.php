@@ -111,9 +111,9 @@ class Atom_Feed {
     public function __construct ( $id, $path, $title, $date, $author, $entries = null, $logo = null, $icon = null ) {
         $this->id      = (string) $id;
         $this->path    = (string) $path;
-        $this->title   =  $title;
+        $this->title   = $title;
         $this->date    = (int) $date;
-        $this->author  =  $author;
+        $this->author  = $author;
         $this->entries = (empty($entries)) ? array() : $entries;
         $this->logo    = (empty($logo))    ? null    : (string) $logo;
         $this->icon    = (empty($icon))    ? null    : (string) $icon;
@@ -125,44 +125,65 @@ class Atom_Feed {
       *
       * @param $entry : Atom_Entry
       */
-    public function addEntry ( $entry ) {
+    public function add_entry ( $entry ) {
         $this->entries[] = $entry;
+    }
+    
+     /**
+      * \brief Makes the link tag and returns it
+      * \since 1.0
+      *
+      * @return string
+      */
+    public function get_linktag () {
+        return '<link rel="alternate" type="application/atom+xml" title="'.$this->title->get_content().'" href="'.$this->path.'" />'."\n";
     }
 
      /**
-      * \brief Generates the xml of the Atom_Category entry
+      * \brief Generates the xml document of an Atom feed
       * \since 1.0
       *
       * @return DomDocument
       */
     public function generate_xml () {
-        $doc = new DomDocument;
-        $_feed = $doc->createElement('feed');
-        $feed = $doc->appendChild($_feed);
+        $this->document = new DomDocument;
+        $_feed = $this->document->createElement('feed');
+        $feed = $this->document->appendChild($_feed);
         
         $feed->setAttribute ("xmlns", "http://www.w3.org/2005/Atom");
 
          /* Madatory informations about the feed */
-        $id    = $doc->createElement('id');
-        $date  = $doc->createElement('updated');
-        $_id   = $doc->createTextNode((string) $this->id);
+        $id    = $this->document->createElement('id');
+        $date  = $this->document->createElement('updated');
+        $_id   = $this->document->createTextNode((string) $this->id);
         $_title = $this->title->generate_xml()->getElementsByTagName('title')->item(0);
-        $_date = $doc->createTextNode(date('c', $this->date));
+        $_date = $this->document->createTextNode(date('c', $this->date));
         $id->appendChild($_id);
-        $title = $doc->importNode($_title, true);
+        $title = $this->document->importNode($_title, true);
         $date->appendChild($_date);
         $feed->appendChild($id);
         $feed->appendChild($title);
         $feed->appendChild($date);
+
+         /* The special link self */
+        $self = new Atom_Link($this->path, 'self');
+        $__self = $self->generate_xml()->getElementsByTagName('link')->item(0);
+        $_self = $this->document->importNode($__self, true);
+        $feed->appendChild($_self);
         
          /* Entries */
         foreach ($this->entries as $entry) {
             $__entry = $entry->generate_xml()->getElementsByTagName('entry')->item(0);
-            $_entry = $doc->importNode($__entry, true);
+            $_entry = $this->document->importNode($__entry, true);
             $feed->appendChild($_entry);
         }
+        
+        /* Saves the document in the file pointed by $this->path */
+        $file = fopen($this->path, 'w+');
+        fprintf($file, '%s', $this->document->saveXML());
+        fclose($file);
 
-        return $doc;
+        return $this->document;
     }
 
      /**
@@ -249,7 +270,7 @@ class Atom_Feed {
       * \brief Setter of $id
       * \since 1.0
       *
-      * @param $id : string
+      * @param $id    : string
       * @return $this : Atom_Feed
       */
     public function id( $id ) {
@@ -260,7 +281,7 @@ class Atom_Feed {
       * \brief Setter of $path
       * \since 1.0
       *
-      * @param $path : string
+      * @param $path  : string
       * @return $this : Atom_Feed
       */
     public function path( $path ) {
@@ -283,7 +304,7 @@ class Atom_Feed {
       * \since 1.0
       *
       * @param $author : string
-      * @return $this : Atom_Feed
+      * @return $this  : Atom_Feed
       */
     public function author( $author ) {
         $this->author = (string) $author;
@@ -294,7 +315,7 @@ class Atom_Feed {
       * \since 1.0
       *
       * @param $entries : string
-      * @return $this : Atom_Feed
+      * @return $this   : Atom_Feed
       */
     public function entries( $entries ) {
         $this->entries = (string) $entries;
@@ -305,7 +326,7 @@ class Atom_Feed {
       * \since 1.0
       *
       * @param $document : string
-      * @return $this : Atom_Feed
+      * @return $this    : Atom_Feed
       */
     public function document( $document ) {
         $this->document = (string) $document;
@@ -315,7 +336,7 @@ class Atom_Feed {
       * \brief Setter of $logo
       * \since 1.0
       *
-      * @param $logo : string
+      * @param $logo  : string
       * @return $this : Atom_Feed
       */
     public function logo( $logo ) {
@@ -326,7 +347,7 @@ class Atom_Feed {
       * \brief Setter of $icon
       * \since 1.0
       *
-      * @param $icon : string
+      * @param $icon  : string
       * @return $this : Atom_Feed
       */
     public function icon( $icon ) {
@@ -434,11 +455,11 @@ class Atom_Entry {
       * @param $rigths       : Atom_Text
       */
     public function __construct ( $id, $title, $date, $authors = null, $content = null, $links = null, $summary = null, $category = null, $contributors = null, $rights = null ) {
-         /* Mandatory  */
+         /* Mandatory */
         $this->id           = (string) $id;
         $this->title        = $title;
         $this->date         = (int) $date;
-         /* Others  */
+         /* Others */
         $this->authors       = (empty($authors))     ? array() : $authors;
         $this->content      = (empty($content))      ? null    : $content;
         $this->links        = (empty($links))        ? array() : $links;
@@ -452,7 +473,6 @@ class Atom_Entry {
       * \brief Generates the xml of the Atom_Entry
       * \since 1.0 
       *
-      * @todo Check if a content or an altrnate link is specified
       * @return DomDocument in case of success, false otherwise
       */
     public function generate_xml () {
@@ -647,7 +667,7 @@ class Atom_Entry {
       * \brief Setter of $id
       * \since 1.0
       *
-      * @param $id : string
+      * @param $id    : string
       * @return $this : Atom_Entry
       */
     public function id( $id ) {
@@ -671,7 +691,7 @@ class Atom_Entry {
       * \brief Setter of $date
       * \since 1.0
       *
-      * @param $date : string
+      * @param $date  : string
       * @return $this : Atom_Entry
       */
     public function date( $date ) {
@@ -684,7 +704,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $authors : string
-      * @return $this : Atom_Entry
+      * @return $this   : Atom_Entry
       */
     public function authors( $author ) {
         $this->authors = (string) $authors;
@@ -696,7 +716,7 @@ class Atom_Entry {
       * \since 1.0
       *
       * @param $content : string
-      * @return $this : Atom_Entry
+      * @return $this   : Atom_Entry
       */
     public function content( $content ) {
         $this->content = (string) $content;
@@ -828,13 +848,13 @@ class Atom_Category {
     }
     
      /**
-      * \brief Getter of $name
+      * \brief Getter of $term
       * \since 1.0
       *
-      * @return $name : int
+      * @return $term : int
       */
-    public function get_name () {
-        return $this->name;
+    public function get_term () {
+        return $this->term;
     }
 
      /**
@@ -858,14 +878,14 @@ class Atom_Category {
     }
     
      /**
-      * \brief Setter of $name
+      * \brief Setter of $term
       * \since 1.0
       *
-      * @param $name : string
+      * @param $term  : string
       * @return $this : Atom_Category
       */
-    public function name( $name ) {
-        $this->name = (string) $name;
+    public function term( $term ) {
+        $this->term = (string) $term;
         return $this;
     }
 
@@ -874,7 +894,7 @@ class Atom_Category {
       * \since 1.0
       *
       * @param $scheme : string
-      * @return $this : Atom_Category
+      * @return $this  : Atom_Category
       */
     public function scheme( $scheme ) {
         $this->scheme = (string) $scheme;
@@ -1299,9 +1319,9 @@ class Atom_Person {
      /**
       * \brief Atom_Person construction's constructor
       *
-      * @param $name : string
-      * @param $type : string
-      * @param $uri  : string
+      * @param $name  : string
+      * @param $type  : string
+      * @param $uri   : string
       * @param $email : string
       */
     public function __construct ( $name, $type = 'author', $uri = '', $email = '' ) {
@@ -1424,7 +1444,7 @@ class Atom_Person {
      * \since 1.0
      *
      * @param $email    : string
-     * @return $this   : Atom_Person
+     * @return $this    : Atom_Person
      */
     public function email ( $email ) {
         $this->email = (string) $email;
