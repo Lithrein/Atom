@@ -120,13 +120,19 @@ class Atom_Feed {
     }
     
      /**
-      * \brief Adding an entry to the feed
+      * \brief Adds an entry to the feed
       * \since 1.0
       *
       * @param $entry : Atom_Entry
+      * @return $this : Atom_Feed
       */
     public function add_entry ( $entry ) {
-        $this->entries[] = $entry;
+        if ($entry instanceof Atom_Entry)
+            $this->entries[] = $entry;
+        else
+            trigger_error("'\$entry' is not an instance  of Atom_Entry", E_USER_ERROR);
+
+        return $this;
     }
     
      /**
