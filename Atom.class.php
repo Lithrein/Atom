@@ -176,6 +176,12 @@ class Atom_Feed {
         $__self = $self->generate_xml()->getElementsByTagName('link')->item(0);
         $_self = $this->document->importNode($__self, true);
         $feed->appendChild($_self);
+
+         /* The logo */
+        $logo  = $this->document->createElement('logo');
+        $_logo = $this->document->createTextNode((string) $this->logo);
+        $logo->appendChild($_logo);
+        $feed->appendChild($logo);
         
          /* Entries */
         foreach ($this->entries as $entry) {
