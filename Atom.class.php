@@ -163,7 +163,7 @@ class Atom_Feed {
       * @return DomDocument
       */
     public function generate_xml () {
-        $this->document = new DomDocument('1.0', (string) $charset);
+        $this->document = new DomDocument('1.0', (string) $this->charset);
         $_feed = $this->document->createElement('feed');
         $feed = $this->document->appendChild($_feed);
         
