@@ -20,6 +20,7 @@
 **  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.          **
 ******************************************************************************************/
 
+/** @todo a charset support */
 class Atom_Feed {
      /**
       * \brief id of the feed (unique)
@@ -63,6 +64,14 @@ class Atom_Feed {
       */
     private $author;
      /**
+      * \brief Feed's charset
+      * \since 1.0
+      *
+      * @var string
+      * @name charset
+      */
+    private $charset;
+     /**
       * \brief Array of the feed's entries
       * \since 1.0
       *
@@ -104,16 +113,18 @@ class Atom_Feed {
       * @param $title   : Atom_Text
       * @param $date    : int (timestamp)
       * @param $author  : Atom_Person
+      * @param $charset : string
       * @param $entries : Atom_Entry[]
       * @param $logo    : string
       * @param $icon    : string
       */
-    public function __construct ( $id, $path, $title, $date, $author, $entries = null, $logo = null, $icon = null ) {
+    public function __construct ( $id, $path, $title, $date, $author, $charset = 'utf-8', $entries = null, $logo = null, $icon = null ) {
         $this->id      = (string) $id;
         $this->path    = (string) $path;
         $this->title   = $title;
         $this->date    = (int) $date;
         $this->author  = $author;
+        $this->charset = (string) $charset;
         $this->entries = (empty($entries)) ? array() : $entries;
         $this->logo    = (empty($logo))    ? null    : (string) $logo;
         $this->icon    = (empty($icon))    ? null    : (string) $icon;
@@ -152,7 +163,7 @@ class Atom_Feed {
       * @return DomDocument
       */
     public function generate_xml () {
-        $this->document = new DomDocument;
+        $this->document = new DomDocument('1.0', (string) $charset);
         $_feed = $this->document->createElement('feed');
         $feed = $this->document->appendChild($_feed);
         
