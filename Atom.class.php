@@ -202,7 +202,7 @@ class Atom_Feed {
         }
         
         /* Saves the document in the file pointed by $this->path */
-        $file = fopen($this->path, 'w+');
+        $file = fopen($this->path, 'w');
         fprintf($file, '%s', $this->document->saveXML());
         fclose($file);
 
@@ -247,6 +247,16 @@ class Atom_Feed {
       */
     public function get_author () {
         return $this->author;
+    }
+ 
+     /**
+      * \brief Getter of $charset
+      * \since 1.0
+      *
+      * @return $charset : string
+      */
+    public function get_charset () {
+        return $this->charset;
     }
     
      /**
@@ -322,17 +332,31 @@ class Atom_Feed {
         $this->title = (string) $title;
         return $this;
     }
+
      /**
       * \brief Setter of $author
       * \since 1.0
       *
-      * @param $author : string
+      * @param $author : Atom_Person
       * @return $this  : Atom_Feed
       */
     public function author( $author ) {
-        $this->author = (string) $author;
+        $this->author = $author;
         return $this;
     }
+     /**
+      * \brief Setter of $charset
+      * \since 1.0
+      *
+      * @param $charset : string
+      * @return $this  : Atom_Feed
+      */
+    public function charset( $charset ) {
+        $this->charset = (string) $charset;
+        return $this;
+    }
+
+
      /**
       * \brief Setter of $entries
       * \since 1.0
